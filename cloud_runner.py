@@ -61,35 +61,38 @@ def send_email(subject,body,run_key=None,state_dir='state'):
     if len(set(tos))!=2 or any('@' not in x or '\n' in x or '\r' in x for x in tos):raise ValueError('MAIL_TO must contain exactly two distinct authorized recipients from repository Secrets')
     Path(state_dir).mkdir(parents=True,exist_ok=True)
     db=sqlite3.connect(str(Path(state_dir)/'mail.sqlite3'))
-    db.execute('CREATE TABLE IF NOT EXISTS deliveries (run_key TEXT PRIMARY KEY,status TEXT,result TEXT)')
-    key=run_key or str(int(time.time()))
-    row=db.execute('SELECT status,result FROM deliveries WHERE run_key=?',(key,)).fetchone()
-    if row:return {'duplicate_suppressed':True,'previous_status':row[0],'previous_result':json.loads(row[1])}
-    msg=EmailMessage();msg['From']=user;msg['To']=', '.join(tos);msg['Subject']=subject
-    msg['Message-ID']=f'<gate-xauusd-{key}@{user.split("@")[-1]}>';msg.set_content(body)
-    smtp=None
-    # Retry only pre-submission transient transport failures; no blind retry after ambiguous DATA result.
-    for attempt in range(1,4):
-        try:
-            smtp=smtplib.SMTP_SSL(host=host,port=port,timeout=20);smtp.login(user,password);break
-        except smtplib.SMTPAuthenticationError:raise
-        except (OSError,smtplib.SMTPConnectError,smtplib.SMTPServerDisconnected):
-            if attempt==3:raise
-            time.sleep(attempt)
-    db.execute('INSERT INTO deliveries VALUES (?,?,?)',(key,'SUBMISSION_STARTED','{}'));db.commit()
     try:
-        refused=smtp.send_message(msg)
-        result={'submitted_to_smtp':not refused,'accepted_recipients':[x for x in tos if x not in refused],
-                'refused_recipients':{k:str(v) for k,v in refused.items()},'message_id':msg['Message-ID'],'receipt_confirmed':False,'host':host}
-        status='ACCEPTED' if not refused else 'PARTIAL'
-    except Exception as exc:
-        result={'submitted_to_smtp':False,'error':redact_error(exc),'delivery_uncertain':True,
-                'automatic_retry_suppressed':True};status='UNKNOWN'
+        db.execute('CREATE TABLE IF NOT EXISTS deliveries (run_key TEXT PRIMARY KEY,status TEXT,result TEXT)')
+        key=run_key or str(int(time.time()))
+        row=db.execute('SELECT status,result FROM deliveries WHERE run_key=?',(key,)).fetchone()
+        if row:return {'duplicate_suppressed':True,'previous_status':row[0],'previous_result':json.loads(row[1])}
+        msg=EmailMessage();msg['From']=user;msg['To']=', '.join(tos);msg['Subject']=subject
+        msg['Message-ID']=f'<gate-xauusd-{key}@{user.split("@")[-1]}>';msg.set_content(body)
+        smtp=None
+        # Retry only pre-submission transient transport failures; no blind retry after ambiguous DATA result.
+        for attempt in range(1,4):
+            try:
+                smtp=smtplib.SMTP_SSL(host=host,port=port,timeout=20);smtp.login(user,password);break
+            except smtplib.SMTPAuthenticationError:raise
+            except (OSError,smtplib.SMTPConnectError,smtplib.SMTPServerDisconnected):
+                if attempt==3:raise
+                time.sleep(attempt)
+        db.execute('INSERT INTO deliveries VALUES (?,?,?)',(key,'SUBMISSION_STARTED','{}'));db.commit()
+        try:
+            refused=smtp.send_message(msg)
+            result={'submitted_to_smtp':not refused,'accepted_recipients':[x for x in tos if x not in refused],
+                    'refused_recipients':{k:str(v) for k,v in refused.items()},'message_id':msg['Message-ID'],'receipt_confirmed':False,'host':host}
+            status='ACCEPTED' if not refused else 'PARTIAL'
+        except Exception as exc:
+            result={'submitted_to_smtp':False,'error':redact_error(exc),'delivery_uncertain':True,
+                    'automatic_retry_suppressed':True};status='UNKNOWN'
+        finally:
+            try:smtp.quit()
+            except Exception:pass
+        db.execute('UPDATE deliveries SET status=?,result=? WHERE run_key=?',(status,json.dumps(result),key));db.commit()
+        return result
     finally:
-        try:smtp.quit()
-        except Exception:pass
-    db.execute('UPDATE deliveries SET status=?,result=? WHERE run_key=?',(status,json.dumps(result),key));db.commit();db.close()
-    return result
+        db.close()
 
 def main():
     cli=argparse.ArgumentParser()
@@ -137,4 +140,5 @@ def main():
         print('EMAIL STATUS:',json.dumps({k:v for k,v in status.items() if k in ('submitted_to_smtp','duplicate_suppressed','previous_status','error','delivery_uncertain')},ensure_ascii=False))
     return 0 if report.get('status') in ('PASS','RESTING') and mail_ok else 2
 if __name__=='__main__':raise SystemExit(main())
+
 
