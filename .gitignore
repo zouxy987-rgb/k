@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.env
+state/
+output/
+*.sqlite3
+SMTP*
