@@ -1,0 +1,104 @@
+name: Gate XAUUSD CFD ABC
+on:
+  push:
+    branches: [main]
+    paths: ['*.py', '.github/workflows/xauusd_cfd_hourly.yml']
+  workflow_dispatch:
+  schedule:
+    - cron: '3 * * * *'
+permissions:
+  contents: read
+concurrency:
+  group: gate-xauusd-cfd-pipeline
+  cancel-in-progress: false
+jobs:
+  audit:
+    if: ${{ github.event_name != 'schedule' || vars.RUNNER_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    env:
+      SEND_MAIL: ${{ vars.SEND_MAIL }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Restore private mail ledger
+        if: vars.SEND_MAIL == 'true'
+        uses: actions/cache/restore@v4
+        with:
+          path: state/
+          key: xauusd-mail-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: xauusd-mail-
+      - name: Causal and fail-closed regression
+        run: python -m unittest -v test_gate_audit.py test_cloud_runner.py
+      - name: Actual Gate CFD fetch audit and ABC judgment
+        id: pipeline
+        continue-on-error: true
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_APP_PASSWORD: ${{ secrets.SMTP_APP_PASSWORD }}
+          MAIL_TO: ${{ secrets.MAIL_TO }}
+        run: |
+          if [ "$SEND_MAIL" = "true" ]; then
+            python cloud_runner.py --out-dir output --state-dir state --send-mail
+          else
+            python cloud_runner.py --out-dir output --state-dir state
+          fi
+      - name: Record independent acceptance gates
+        if: always()
+        run: |
+          python - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path('output');p.mkdir(exist_ok=True)
+          read=lambda n:json.loads((p/n).read_text()) if (p/n).exists() else {}
+          a=read('audit.json');d=read('decision.json');m=read('email_delivery.json')
+          market=a.get('status') in ('PASS','RESTING')
+          mail=bool(m.get('submitted_to_smtp') or (m.get('duplicate_suppressed') and m.get('previous_status')=='ACCEPTED'))
+          result={'market_audit':a.get('status','FAIL'),'abc_calculation':'PASS' if d.get('plans') else 'FAIL','cloud_execution':'PASS','email_submission':'PASS' if mail else 'FAIL','email_attempted':os.environ.get('SEND_MAIL')=='true','scheduled_execution_observed':os.environ['GITHUB_EVENT_NAME']=='schedule','overall':'PASS' if market and mail and d.get('plans') else 'FAIL','run_id':os.environ['GITHUB_RUN_ID']}
+          (p/'acceptance.json').write_text(json.dumps(result,indent=2))
+          print(json.dumps(result,indent=2))
+          with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
+            f.write('Actual Gate CFD acceptance: '+json.dumps(result)+'; Data-only success does not pass email or whole-system acceptance.')
+          PY
+      - name: Preserve public market evidence only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gate-xauusd-evidence-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            output/http/
+            output/audit.json
+            output/decision.json
+            output/run.json
+            output/raw_gate_public.json
+            output/acceptance.json
+            output/XAUUSD_*.csv
+            output/report.txt
+            output/subject.txt
+            output/error.log
+          retention-days: 7
+      - name: Cache private delivery ledger
+        if: always() && vars.SEND_MAIL == 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: state/
+          key: xauusd-mail-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Enforce live market and requested email gates
+        if: always()
+        env:
+          PIPELINE_OUTCOME: ${{ steps.pipeline.outcome }}
+        run: |
+          python - <<'PY'
+          import json,os
+          from pathlib import Path
+          assert os.environ['PIPELINE_OUTCOME']=='success', 'Pipeline failed; inspect raw evidence'
+          a=json.loads(Path('output/acceptance.json').read_text())
+          assert a['market_audit'] in ('PASS','RESTING'), a
+          assert a['abc_calculation']=='PASS', a
+          if os.environ.get('SEND_MAIL')=='true':
+            assert a['email_submission']=='PASS', 'Independent SMTP acceptance has not passed'
+          PY
