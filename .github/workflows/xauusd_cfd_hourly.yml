@@ -58,7 +58,7 @@ jobs:
           a=read('audit.json');d=read('decision.json');m=read('email_delivery.json')
           market=a.get('status') in ('PASS','RESTING')
           mail=bool(m.get('submitted_to_smtp') or (m.get('duplicate_suppressed') and m.get('previous_status')=='ACCEPTED'))
-          result={'market_audit':a.get('status','FAIL'),'abc_calculation':'PASS' if d.get('plans') else 'FAIL','cloud_execution':'PASS','email_submission':'PASS' if mail else 'FAIL','email_attempted':os.environ.get('SEND_MAIL')=='true','scheduled_execution_observed':os.environ['GITHUB_EVENT_NAME']=='schedule','overall':'PASS' if market and mail and d.get('plans') else 'FAIL','run_id':os.environ['GITHUB_RUN_ID']}
+          result={'market_audit':a.get('status','FAIL'),'abc_calculation':'PASS' if d.get('plans') else 'FAIL','cloud_execution':'PASS','github_smtp_submission':('PASS' if mail else 'FAIL') if os.environ.get('SEND_MAIL')=='true' else 'NOT_ATTEMPTED','external_gmail_submission':'UNVERIFIED','email_attempted':os.environ.get('SEND_MAIL')=='true','scheduled_execution_observed':os.environ['GITHUB_EVENT_NAME']=='schedule','source_overall':'PASS' if market and d.get('plans') else 'FAIL','overall':'PENDING_EXTERNAL_GMAIL','run_id':os.environ['GITHUB_RUN_ID']}
           (p/'acceptance.json').write_text(json.dumps(result,indent=2))
           print(json.dumps(result,indent=2))
           with open(os.environ['GITHUB_STEP_SUMMARY'],'a') as f:
@@ -100,5 +100,5 @@ jobs:
           assert a['market_audit'] in ('PASS','RESTING'), a
           assert a['abc_calculation']=='PASS', a
           if os.environ.get('SEND_MAIL')=='true':
-            assert a['email_submission']=='PASS', 'Independent SMTP acceptance has not passed'
+            assert a['github_smtp_submission']=='PASS', 'Independent SMTP acceptance has not passed'
           PY
