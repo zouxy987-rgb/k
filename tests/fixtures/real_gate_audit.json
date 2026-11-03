@@ -1,0 +1,359 @@
+{
+  "status": "PASS",
+  "approved_for_market_analysis": true,
+  "approved_for_executable_signal": false,
+  "approved_for_simulation": true,
+  "source": "LIVE_GATE_CFD",
+  "symbol": "XAUUSD",
+  "audited_at_utc": "2026-11-03T10:41:06+00:00",
+  "closed_bar_cutoff_utc": "2026-11-03T10:40:35.154000+00:00",
+  "issues": [],
+  "warnings": [
+    "Actual tick timestamp is not provided. Freshness bounded by latest real 1m bar, not ticker server time.",
+    "Standard public-feed profile is inferred from native session evidence and live open/close; account 7x23 beta rights unverified.",
+    "Private /tradfi/symbols/detail requires authentication; public /tradfi/symbols used for identity. Contract size not inferred."
+  ],
+  "market_data": {
+    "ticker": {
+      "bid": 3903.99,
+      "ask": 3904.08,
+      "spread": 0.09,
+      "status": "open",
+      "trade_mode": "4",
+      "server_timestamp_utc": "2026-11-03T10:41:05.961000+00:00",
+      "tick_timestamp_available": false,
+      "actual_last_tick_time": null,
+      "open_time_utc": "2026-11-02T23:01:00+00:00",
+      "close_time_utc": "2026-11-03T21:59:00+00:00",
+      "next_open_time": 0,
+      "deviation_from_closed_1m": 0.0006723812670736815
+    },
+    "4h": {
+      "received": 220,
+      "closed": 219,
+      "last_closed_start_utc": "2026-11-03T06:00:00+00:00",
+      "last_closed_end_utc": "2026-11-03T10:00:00+00:00",
+      "last_closed_close": 3909.47,
+      "actual_latest_bar_start_utc": "2026-11-03T10:00:00+00:00",
+      "last_close_age_seconds": 2466,
+      "gaps": [
+        {
+          "from_utc": "2026-09-18T17:00:00+00:00",
+          "to_utc": "2026-09-20T21:00:00+00:00",
+          "seconds": 187200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-09-25T17:00:00+00:00",
+          "to_utc": "2026-09-27T21:00:00+00:00",
+          "seconds": 187200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-02T17:00:00+00:00",
+          "to_utc": "2026-10-04T21:00:00+00:00",
+          "seconds": 187200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-09T17:00:00+00:00",
+          "to_utc": "2026-10-11T21:00:00+00:00",
+          "seconds": 187200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-16T17:00:00+00:00",
+          "to_utc": "2026-10-18T21:00:00+00:00",
+          "seconds": 187200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-23T17:00:00+00:00",
+          "to_utc": "2026-10-25T21:00:00+00:00",
+          "seconds": 187200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-30T17:00:00+00:00",
+          "to_utc": "2026-11-01T22:00:00+00:00",
+          "seconds": 190800,
+          "classification": "scheduled_public_feed_close"
+        }
+      ]
+    },
+    "1h": {
+      "received": 180,
+      "closed": 179,
+      "last_closed_start_utc": "2026-11-03T09:00:00+00:00",
+      "last_closed_end_utc": "2026-11-03T10:00:00+00:00",
+      "last_closed_close": 3909.47,
+      "actual_latest_bar_start_utc": "2026-11-03T10:00:00+00:00",
+      "last_close_age_seconds": 2466,
+      "gaps": [
+        {
+          "from_utc": "2026-10-22T20:00:00+00:00",
+          "to_utc": "2026-10-22T22:00:00+00:00",
+          "seconds": 7200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-23T20:00:00+00:00",
+          "to_utc": "2026-10-25T22:00:00+00:00",
+          "seconds": 180000,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-26T20:00:00+00:00",
+          "to_utc": "2026-10-26T22:00:00+00:00",
+          "seconds": 7200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-27T20:00:00+00:00",
+          "to_utc": "2026-10-27T22:00:00+00:00",
+          "seconds": 7200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-28T20:00:00+00:00",
+          "to_utc": "2026-10-28T22:00:00+00:00",
+          "seconds": 7200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-29T20:00:00+00:00",
+          "to_utc": "2026-10-29T22:00:00+00:00",
+          "seconds": 7200,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-30T20:00:00+00:00",
+          "to_utc": "2026-11-01T23:00:00+00:00",
+          "seconds": 183600,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-11-02T21:00:00+00:00",
+          "to_utc": "2026-11-02T23:00:00+00:00",
+          "seconds": 7200,
+          "classification": "scheduled_public_feed_close"
+        }
+      ]
+    },
+    "15m": {
+      "received": 500,
+      "closed": 499,
+      "last_closed_start_utc": "2026-11-03T10:15:00+00:00",
+      "last_closed_end_utc": "2026-11-03T10:30:00+00:00",
+      "last_closed_close": 3902.67,
+      "actual_latest_bar_start_utc": "2026-11-03T10:30:00+00:00",
+      "last_close_age_seconds": 666,
+      "gaps": [
+        {
+          "from_utc": "2026-10-27T20:45:00+00:00",
+          "to_utc": "2026-10-27T22:00:00+00:00",
+          "seconds": 4500,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-28T20:45:00+00:00",
+          "to_utc": "2026-10-28T22:00:00+00:00",
+          "seconds": 4500,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-29T20:45:00+00:00",
+          "to_utc": "2026-10-29T22:00:00+00:00",
+          "seconds": 4500,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-10-30T20:45:00+00:00",
+          "to_utc": "2026-11-01T23:00:00+00:00",
+          "seconds": 180900,
+          "classification": "scheduled_public_feed_close"
+        },
+        {
+          "from_utc": "2026-11-02T21:45:00+00:00",
+          "to_utc": "2026-11-02T23:00:00+00:00",
+          "seconds": 4500,
+          "classification": "scheduled_public_feed_close"
+        }
+      ]
+    },
+    "1m": {
+      "received": 120,
+      "closed": 119,
+      "last_closed_start_utc": "2026-11-03T10:39:00+00:00",
+      "last_closed_end_utc": "2026-11-03T10:40:00+00:00",
+      "last_closed_close": 3901.41,
+      "actual_latest_bar_start_utc": "2026-11-03T10:40:00+00:00",
+      "last_close_age_seconds": 66,
+      "gaps": []
+    }
+  },
+  "identity": {
+    "category_id": 1,
+    "close_time": 1793743140,
+    "icon_link": "https://gimg.staticimgs.com/image/xauusd_20260115_162831_b7ddbdf6ff6ba89d1756a6d7fa9de9d8.png",
+    "is_base": true,
+    "leverages": [
+      "5",
+      "10",
+      "20",
+      "50",
+      "100",
+      "200",
+      "500",
+      "1000"
+    ],
+    "next_open_time": 0,
+    "open_time": 1793660460,
+    "price_precision": 2,
+    "settlement_currency": "USD",
+    "settlement_currency_symbol": "$",
+    "status": "open",
+    "symbol": "XAUUSD",
+    "symbol_desc": "Gold",
+    "symbol_descs": null,
+    "trade_mode": "4"
+  },
+  "indicators": {
+    "4h": {
+      "ema20": 3955.069597484595,
+      "ema50": 4003.5797298477833,
+      "atr14": 32.47748701703634,
+      "swing_high": {
+        "price": 3970.27,
+        "t": 1793628000,
+        "confirmed_at": 1793671200
+      },
+      "swing_low": {
+        "price": 3870.19,
+        "t": 1793379600,
+        "confirmed_at": 1793599200
+      },
+      "structure": "up",
+      "latest_bos": {
+        "t": 1792645200,
+        "direction": "down",
+        "kind": "BOS",
+        "level": 4106.22
+      },
+      "latest_choch": {
+        "t": 1793120400,
+        "direction": "up",
+        "kind": "CHoCH",
+        "level": 4029.95
+      }
+    },
+    "1h": {
+      "ema20": 3925.922138450728,
+      "ema50": 3939.8629330342746,
+      "atr14": 14.481272044156292,
+      "swing_high": {
+        "price": 3964.49,
+        "t": 1793664000,
+        "confirmed_at": 1793674800
+      },
+      "swing_low": {
+        "price": 3937.48,
+        "t": 1793649600,
+        "confirmed_at": 1793664000
+      },
+      "structure": "down",
+      "latest_bos": {
+        "t": 1793383200,
+        "direction": "down",
+        "kind": "BOS",
+        "level": 3891.54
+      },
+      "latest_choch": {
+        "t": 1793678400,
+        "direction": "down",
+        "kind": "CHoCH",
+        "level": 3937.48
+      }
+    },
+    "15m": {
+      "ema20": 3911.284778046682,
+      "ema50": 3922.4869094696824,
+      "atr14": 6.317595258213887,
+      "swing_high": {
+        "price": 3910.52,
+        "t": 1793699100,
+        "confirmed_at": 1793701800
+      },
+      "swing_low": {
+        "price": 3895.48,
+        "t": 1793696400,
+        "confirmed_at": 1793699100
+      },
+      "structure": "down",
+      "latest_bos": {
+        "t": 1793689200,
+        "direction": "down",
+        "kind": "BOS",
+        "level": 3916.34
+      },
+      "latest_choch": {
+        "t": 1793685600,
+        "direction": "down",
+        "kind": "CHoCH",
+        "level": 3921.36
+      }
+    },
+    "1m": {
+      "ema20": 3903.7040225145915,
+      "ema50": 3904.93204811788,
+      "atr14": 1.3013386833537721,
+      "swing_high": {
+        "price": 3904.99,
+        "t": 1793702100,
+        "confirmed_at": 1793702280
+      },
+      "swing_low": {
+        "price": 3902.27,
+        "t": 1793701740,
+        "confirmed_at": 1793701920
+      },
+      "structure": "down",
+      "latest_bos": {
+        "t": 1793702340,
+        "direction": "down",
+        "kind": "BOS",
+        "level": 3902.27
+      },
+      "latest_choch": {
+        "t": 1793700120,
+        "direction": "down",
+        "kind": "CHoCH",
+        "level": 3908.21
+      }
+    }
+  },
+  "cross_timeframe": {
+    "1m->15m": {
+      "matched": 7,
+      "conflicts": [],
+      "tolerance_usd": 0.011
+    },
+    "15m->1h": {
+      "matched": 124,
+      "conflicts": [],
+      "tolerance_usd": 0.011
+    },
+    "15m->4h": {
+      "matched": 27,
+      "conflicts": [],
+      "tolerance_usd": 0.011
+    }
+  },
+  "session_profile": "Observed standard Gate public CFD feed; NY DST-aware; unmatched gaps block",
+  "limitations": [
+    "No last tick timestamp",
+    "Account rights unverified",
+    "OHLC only, volume/OI unavailable",
+    "Not profitability certification"
+  ]
+}
