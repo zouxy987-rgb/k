@@ -7,17 +7,20 @@ No account trading API, API keys, order placement, or live trading capability.
 
 The original acquisition bug has been repaired: `/tradfi/symbols/detail` now requires authentication, so the public `/tradfi/symbols` identity endpoint is used. Native Gate CFD XAUUSD quotes and 4H/1H/15m/1m bars were obtained and audited in an interactive cloud environment. Archived REAL snapshots are regression fixtures, not a fresh live-data approval.
 
-GitHub Actions deployment and external SMTP acceptance must be verified independently. A green data audit does not certify delivery, profit or complete system acceptance.
+GitHub Actions actually ran on 2026-11-03 at 20:11 Beijing time: run `41633582940`, commit `eacb782ebc28b7218c177a0dba216e9eb9a43b9d`. The native CFD fetch/audit and ABC calculation passed; the report was observation only. All 19 regression tests also passed. This is actual runner evidence, not merely a successful deployment.
+
+The active notification route is a separate ChatGPT cloud task using the connected Gmail account. The GitHub report was submitted to both authorized recipients and Gmail self-delivery was verified during integration testing. QQ inbox delivery and the first natural scheduled cycle remain unverified. No qualified entry is allowed while the macro-event calendar is unverified. Whole-system acceptance remains pending; a green data-only workflow is not whole-system approval.
 
 ## Workflow
 
 - A push to implementation/workflow files or manual dispatch runs the official API pipeline once on a standard `ubuntu-latest` runner.
-- The hourly cron is minute 03 (also Beijing minute 03). Until `RUNNER_ENABLED=true`, scheduled production runs remain disabled to preserve the existing notifier during migration.
-- Default runs fetch/audit/decide without sending mail. To test independent email, configure the repository Secrets below, set `SEND_MAIL=true`, then manually dispatch. A valid macro-event calendar is also required for S4; without it the system can report observations but never emits a qualified entry.
-- After verifying both authorized recipients were accepted, pause the former notifier and set `RUNNER_ENABLED=true`. Do not run two production mail schedulers together.
+- The hourly cron is minute 03 (also Beijing minute 03). `RUNNER_ENABLED=true` has been configured after integration testing; the next natural trigger still needs verification.
+- GitHub fetches/audits/decides and saves evidence. The existing ChatGPT hourly task was upgraded in place to read the same-hour GitHub run and send through connected Gmail at minute 08, Asia/Shanghai. No parallel legacy mail task was created. This route needs no SMTP password and no personal device to remain on, but depends on both cloud schedulers and the Gmail connection.
+- `SEND_MAIL` is unset/off on GitHub to prevent duplicate delivery. The SMTP path below is optional and inactive. Do not activate it while the external cloud notifier is active.
+- The notifier checks SENT for the exact hourly key before sending, fails closed when the same-hour result is unavailable, records source/notification times and suppresses actionable entries when the quote is over 120 seconds old. At over 15 minutes it reports a notification freshness failure. Delayed notices preserve the original as-of audit state rather than pretending prices are live at send time.
 - All decisions are simulations. `approved_for_executable_signal` remains false.
 
-## Secrets and variables
+## Optional SMTP fallback: secrets and variables
 
 | Setting | Location | Meaning |
 |---|---|---|
@@ -27,9 +30,9 @@ GitHub Actions deployment and external SMTP acceptance must be verified independ
 | SMTP_PORT | Actions Secret | Optional; defaults to 465 with TLS |
 | MAIL_TO | Actions Secret | Exactly the two explicitly authorized recipient addresses, comma-separated |
 | SEND_MAIL | Actions variable | true to attempt SMTP; otherwise data-only verification |
-| RUNNER_ENABLED | Actions variable | true only after the production migration gate is satisfied |
+| RUNNER_ENABLED | Actions variable | true enables the data cron; configured after integration testing |
 
-Connected ChatGPT Gmail authorization cannot be copied into this standalone worker. Secrets must be securely configured by the account owner. SMTP delivery receipts and the mail ledger are excluded from public artifacts/logs. Market evidence is public; credentials are not stored in artifacts.
+Connected ChatGPT Gmail authorization cannot be copied into this standalone worker; the active cloud notification task uses that connection in its own managed environment. The SMTP entries above are needed only if a later migration intentionally replaces that notification task. SMTP delivery receipts and the mail ledger are excluded from public artifacts/logs. Market evidence is public; credentials are not stored in artifacts. The workflow acceptance JSON covers its local SMTP path only, so email_submission=FAIL in a data-only run does not represent the separately tested Gmail notification route.
 
 ## Evidence and recovery
 
